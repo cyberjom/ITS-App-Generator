@@ -1,5 +1,13 @@
 require "ias/version"
 
 module Ias
-  # Your code goes here...
+  class Food
+    def self.portray(food)
+      if food.downcase == "broccoli"
+        "Gross!"
+      else
+        "Delicious!"
+      end
+    end
+  end
 end
