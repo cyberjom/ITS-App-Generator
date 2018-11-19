@@ -15,6 +15,43 @@ module Ias
 
     end
     
+    def self.show(data)
+      path = "/"+data.class.to_s.pluralize.downcase
+      attrs = data.attribute_names
+      
+      out = "#{link_to " Add ", path+'/new'}"
+      out << "#{link_to " Edit ", path+'/'+data[:id].to_s+'/edit'}"
+      out << "#{link_to " Delete ", path}"
+      out << '<br>'
+      out << '<table class="table table-sm table-striped table-bordered table-hover">'
+        out << '<thead class="thead-light">'
+          out << '<tr>'
+            out << '<th scope="col">'+"#"+'</th>'          
+            out << '<th scope="col">'+"Field"+'</th>'
+            out << '<th scope="col">'+"Value"+'</th>'
+          out << '</tr>'
+        out << '</thead>'
+        out << '<tbody>'
+        i = 1
+        attrs.each do |a|
+          out << '<tr>'
+            out << "<td>#{i.to_s}</td>"
+            out << "<td>#{a.to_s}</td>"
+            out << '<td>'
+            if data[a]
+              out << data[a].to_s
+            else
+              out << ""
+            end
+            out << '</td>'
+          out << '</tr>'
+          i += 1
+        end
+        out << '</tbody>'
+      out << '</table>'
+      return out      
+    end
+    
     def self.table(data)
       patch_row = data.limit_value-data.count
       path = "/"+data.model.to_s.pluralize.downcase
@@ -22,12 +59,17 @@ module Ias
       lastp = data.total_pages
       nextp = data.next_page || lastp
       
-      attrs = data[0].attribute_names
+      attrs = data[0].attribute_names-["created_at", "updated_at", "created_by_id", "updated_by_id"]
+      
       out = '<table class="table table-sm table-striped table-bordered table-hover">'
         out << '<thead class="thead-light">'
           out << '<tr>'
             attrs.each do |a|
-              out << '<th scope="col">'+data.human_attribute_name(a.to_s)+'</th>'
+              if a=="id"
+                out << '<th scope="col">'+'#'+'</th>'
+              else
+                out << '<th scope="col">'+data.human_attribute_name(a.to_s)+'</th>'
+              end
             end
           out << '</tr>'
         out << '</thead>'
@@ -37,7 +79,11 @@ module Ias
               attrs.each do |a|
                 out << '<td>'
                 if rec[a]
-                  out << rec[a].to_s
+                  if a=="id"
+                    out << "#{link_to rec[a].to_s, path+'/'+rec[a].to_s}"
+                  else
+                    out << rec[a].to_s
+                  end
                 else
                   out << ""
                 end
