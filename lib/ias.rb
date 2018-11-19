@@ -17,7 +17,6 @@ module Ias
     
     def self.table(data)
       patch_row = data.limit_value-data.count
-      ap patch_row
       path = "/"+data.model.to_s.pluralize.downcase
       prevp = data.prev_page || 1
       lastp = data.total_pages
