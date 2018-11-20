@@ -4,6 +4,21 @@ include ActionView::Helpers::UrlHelper
 
 
 module Ias
+  module M
+    def f
+      self.class.name
+    end
+
+    def index
+      self.class.name
+    end
+    
+    # def index
+      # @rows = Customer.order(:id).all.page(params[:page]).per(10)
+      # render :html => Ias::View.table(@rows).html_safe, :layout => "layouts/application"
+    # end
+    
+  end
   class View
     
     def self.list(data, &block)
@@ -17,7 +32,7 @@ module Ias
     
     def self.show(data)
       path = "/"+data.class.to_s.pluralize.downcase
-      attrs = data.attribute_names
+      attrs = data.attribute_names-["created_at", "updated_at", "created_by_id", "updated_by_id"]
       
       out = "#{link_to " Add ", path+'/new'}"
       out << "#{link_to " Edit ", path+'/'+data[:id].to_s+'/edit'}"
